@@ -1,0 +1,273 @@
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <algorithm>
+#include <iomanip>
+
+using namespace std;
+using namespace chrono;
+
+// ============================================
+// LINEAR SEARCH
+// ============================================
+int linearSearch(const vector<int>& arr, int key, long long& comparisons)
+{
+    comparisons = 0;
+
+    for (int i = 0; i < (int)arr.size(); i++)
+    {
+        comparisons++;
+
+        if (arr[i] == key)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
+// ============================================
+// BINARY SEARCH
+// ============================================
+int binarySearch(const vector<int>& arr, int key, long long& comparisons)
+{
+    comparisons = 0;
+
+    int low = 0;
+    int high = (int)arr.size() - 1;
+
+    while (low <= high)
+    {
+        int mid = low + (high - low) / 2;
+
+        comparisons++;
+
+        if (arr[mid] == key)
+        {
+            return mid;
+        }
+        else if (key < arr[mid])
+        {
+            high = mid - 1;
+        }
+        else
+        {
+            low = mid + 1;
+        }
+    }
+
+    return -1;
+}
+
+
+// ============================================
+// MAIN FUNCTION
+// ============================================
+int main()
+{
+    int n;
+
+    cout << "============================================\n";
+    cout << "   SEARCHING ALGORITHMS - PRACTICAL 02\n";
+    cout << "============================================\n\n";
+
+    // Input number of elements
+    cout << "Enter number of elements: ";
+    cin >> n;
+
+    // Validation
+    if (n <= 0)
+    {
+        cout << "Invalid number of elements.\n";
+        return 0;
+    }
+
+    // Create array
+    vector<int> arr(n);
+
+    cout << "\nEnter " << n << " elements:\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        cin >> arr[i];
+    }
+
+    // Create sorted copy for Binary Search
+    vector<int> sortedArr = arr;
+
+    sort(sortedArr.begin(), sortedArr.end());
+
+    // Input search key
+    int key;
+
+    cout << "\nEnter element to search: ";
+    cin >> key;
+
+
+    // ========================================
+    // LINEAR SEARCH EXECUTION
+    // ========================================
+
+    long long linearComparisons = 0;
+
+    auto linearStart = high_resolution_clock::now();
+
+    int linearResult =
+        linearSearch(arr, key, linearComparisons);
+
+    auto linearEnd = high_resolution_clock::now();
+
+    auto linearTime =
+        duration_cast<nanoseconds>(
+            linearEnd - linearStart
+        ).count();
+
+
+    // ========================================
+    // BINARY SEARCH EXECUTION
+    // ========================================
+
+    long long binaryComparisons = 0;
+
+    auto binaryStart = high_resolution_clock::now();
+
+    int binaryResult =
+        binarySearch(
+            sortedArr,
+            key,
+            binaryComparisons
+        );
+
+    auto binaryEnd = high_resolution_clock::now();
+
+    auto binaryTime =
+        duration_cast<nanoseconds>(
+            binaryEnd - binaryStart
+        ).count();
+
+
+    // ========================================
+    // DISPLAY RESULTS
+    // ========================================
+
+    cout << "\n============================================\n";
+    cout << "              SEARCH RESULTS\n";
+    cout << "============================================\n";
+
+
+    // Display original array
+    cout << "\nOriginal Array:\n";
+
+    for (int x : arr)
+    {
+        cout << x << " ";
+    }
+
+
+    // Display sorted array
+    cout << "\n\nSorted Array:\n";
+
+    for (int x : sortedArr)
+    {
+        cout << x << " ";
+    }
+
+
+    // ========================================
+    // LINEAR SEARCH RESULT
+    // ========================================
+
+    cout << "\n\n--------------------------------------------\n";
+
+    cout << "\nLINEAR SEARCH\n";
+
+    if (linearResult != -1)
+    {
+        cout << "Element found at index: "
+             << linearResult << endl;
+    }
+    else
+    {
+        cout << "Element not found.\n";
+    }
+
+    cout << "Comparisons: "
+         << linearComparisons << endl;
+
+    cout << "Execution Time: "
+         << linearTime << " ns\n";
+
+
+    // ========================================
+    // BINARY SEARCH RESULT
+    // ========================================
+
+    cout << "\n--------------------------------------------\n";
+
+    cout << "\nBINARY SEARCH\n";
+
+    if (binaryResult != -1)
+    {
+        cout << "Element found at sorted index: "
+             << binaryResult << endl;
+    }
+    else
+    {
+        cout << "Element not found.\n";
+    }
+
+    cout << "Comparisons: "
+         << binaryComparisons << endl;
+
+    cout << "Execution Time: "
+         << binaryTime << " ns\n";
+
+
+    // ========================================
+    // PERFORMANCE COMPARISON
+    // ========================================
+
+    cout << "\n============================================\n";
+    cout << "          PERFORMANCE COMPARISON\n";
+    cout << "============================================\n";
+
+    cout << left
+         << setw(20) << "Algorithm"
+         << setw(20) << "Comparisons"
+         << setw(20) << "Time (ns)"
+         << endl;
+
+    cout << "--------------------------------------------\n";
+
+    cout << left
+         << setw(20) << "Linear Search"
+         << setw(20) << linearComparisons
+         << setw(20) << linearTime
+         << endl;
+
+    cout << left
+         << setw(20) << "Binary Search"
+         << setw(20) << binaryComparisons
+         << setw(20) << binaryTime
+         << endl;
+
+
+    // ========================================
+    // CONCLUSION
+    // ========================================
+
+    cout << "\n============================================\n";
+    cout << "                 CONCLUSION\n";
+    cout << "============================================\n";
+
+    cout << "Linear Search works on unsorted data.\n";
+
+    cout << "Binary Search requires sorted data.\n";
+
+    cout << "Binary Search generally requires fewer\n";
+    cout << "comparisons for large datasets.\n";
+
+    return 0;
+}
