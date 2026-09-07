@@ -1,0 +1,14 @@
+Enter a positive integer n: 
+----------------------------------------------------------------------
+FACTORIAL COMPUTATION RESULTS FOR N = 10
+----------------------------------------------------------------------
+Method            Result                Time (ns)       Operations
+----------------------------------------------------------------------
+Iterative         3628800               125             10
+Recursive         3628800               41              10
+----------------------------------------------------------------------
+
+Student Name : M R BHAVESH
+Roll Number  : 92460118545
+
+...Program finished with exit code 0
