@@ -1,0 +1,215 @@
+#include <iostream>
+#include <chrono>
+#include <iomanip>
+
+using namespace std;
+using namespace chrono;
+
+// ============================================
+// ITERATIVE FACTORIAL
+// ============================================
+unsigned long long factorialIterative(
+    unsigned int n,
+    long long& operations)
+{
+    unsigned long long result = 1;
+
+    operations = 0;
+
+    for (unsigned int i = 1; i <= n; i++)
+    {
+        result *= i;
+        operations++;
+    }
+
+    return result;
+}
+
+
+// ============================================
+// RECURSIVE FACTORIAL
+// ============================================
+unsigned long long factorialRecursive(
+    unsigned int n,
+    long long& calls)
+{
+    calls++;
+
+    // Base Case
+    if (n <= 1)
+    {
+        return 1;
+    }
+
+    // Recursive Case
+    return n * factorialRecursive(n - 1, calls);
+}
+
+
+// ============================================
+// MAIN FUNCTION
+// ============================================
+int main()
+{
+    cout << "============================================\n";
+    cout << "       PRACTICAL 04 - FACTORIAL ANALYSIS\n";
+    cout << "============================================\n\n";
+
+    unsigned int n;
+
+    cout << "Enter a non-negative integer (0-20): ";
+    cin >> n;
+
+    // Prevent overflow of unsigned long long
+    if (n > 20)
+    {
+        cout << "\nFor this program, enter a value from 0 to 20.\n";
+        cout << "Values above 20 overflow unsigned long long.\n";
+
+        return 0;
+    }
+
+
+    // ========================================
+    // ITERATIVE METHOD
+    // ========================================
+
+    long long iterativeOperations = 0;
+
+    auto startIterative =
+        high_resolution_clock::now();
+
+    unsigned long long iterativeResult =
+        factorialIterative(
+            n,
+            iterativeOperations
+        );
+
+    auto endIterative =
+        high_resolution_clock::now();
+
+    auto iterativeTime =
+        duration_cast<nanoseconds>(
+            endIterative - startIterative
+        ).count();
+
+
+    // ========================================
+    // RECURSIVE METHOD
+    // ========================================
+
+    long long recursiveCalls = 0;
+
+    auto startRecursive =
+        high_resolution_clock::now();
+
+    unsigned long long recursiveResult =
+        factorialRecursive(
+            n,
+            recursiveCalls
+        );
+
+    auto endRecursive =
+        high_resolution_clock::now();
+
+    auto recursiveTime =
+        duration_cast<nanoseconds>(
+            endRecursive - startRecursive
+        ).count();
+
+
+    // ========================================
+    // DISPLAY RESULTS
+    // ========================================
+
+    cout << "\n============================================\n";
+    cout << "              FACTORIAL RESULTS\n";
+    cout << "============================================\n";
+
+    cout << "\nInput n: "
+         << n << endl;
+
+
+    // ========================================
+    // ITERATIVE RESULT
+    // ========================================
+
+    cout << "\n--------------------------------------------\n";
+    cout << "             ITERATIVE METHOD\n";
+    cout << "--------------------------------------------\n";
+
+    cout << "Factorial: "
+         << iterativeResult << endl;
+
+    cout << "Multiplications: "
+         << iterativeOperations << endl;
+
+    cout << "Execution Time: "
+         << iterativeTime << " ns" << endl;
+
+
+    // ========================================
+    // RECURSIVE RESULT
+    // ========================================
+
+    cout << "\n--------------------------------------------\n";
+    cout << "             RECURSIVE METHOD\n";
+    cout << "--------------------------------------------\n";
+
+    cout << "Factorial: "
+         << recursiveResult << endl;
+
+    cout << "Function Calls: "
+         << recursiveCalls << endl;
+
+    cout << "Execution Time: "
+         << recursiveTime << " ns" << endl;
+
+
+    // ========================================
+    // COMPLEXITY COMPARISON
+    // ========================================
+
+    cout << "\n============================================\n";
+    cout << "          COMPLEXITY COMPARISON\n";
+    cout << "============================================\n";
+
+    cout << left
+         << setw(20) << "Method"
+         << setw(20) << "Time"
+         << setw(20) << "Space"
+         << endl;
+
+    cout << "--------------------------------------------\n";
+
+    cout << left
+         << setw(20) << "Iterative"
+         << setw(20) << "O(n)"
+         << setw(20) << "O(1)"
+         << endl;
+
+    cout << left
+         << setw(20) << "Recursive"
+         << setw(20) << "O(n)"
+         << setw(20) << "O(n)"
+         << endl;
+
+
+    // ========================================
+    // CONCLUSION
+    // ========================================
+
+    cout << "\n============================================\n";
+    cout << "                 CONCLUSION\n";
+    cout << "============================================\n";
+
+    cout << "Both methods calculate the same factorial.\n";
+
+    cout << "Both have O(n) time complexity.\n";
+
+    cout << "The iterative method uses O(1) extra space,\n";
+
+    cout << "while recursion uses O(n) call-stack space.\n";
+
+    return 0;
+}
