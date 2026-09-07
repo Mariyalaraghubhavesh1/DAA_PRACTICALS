@@ -1,0 +1,281 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <algorithm>
+
+using namespace std;
+
+// ============================================================
+// 0/1 KNAPSACK USING DYNAMIC PROGRAMMING
+// ============================================================
+
+int main()
+{
+    cout << "====================================================\n";
+    cout << "       PRACTICAL-05_01 : 0/1 KNAPSACK DP\n";
+    cout << "====================================================\n\n";
+
+    int n;
+
+    // --------------------------------------------------------
+    // INPUT NUMBER OF ITEMS
+    // --------------------------------------------------------
+    cout << "Enter number of items: ";
+    cin >> n;
+
+    if (n <= 0)
+    {
+        cout << "Number of items must be greater than 0.\n";
+        return 0;
+    }
+
+    vector<int> weight(n);
+    vector<int> value(n);
+
+    // --------------------------------------------------------
+    // INPUT WEIGHTS
+    // --------------------------------------------------------
+    cout << "\nEnter weights of " << n << " items:\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Weight of item " << i + 1 << ": ";
+        cin >> weight[i];
+
+        if (weight[i] <= 0)
+        {
+            cout << "Weight must be greater than 0.\n";
+            return 0;
+        }
+    }
+
+    // --------------------------------------------------------
+    // INPUT VALUES
+    // --------------------------------------------------------
+    cout << "\nEnter values of " << n << " items:\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Value of item " << i + 1 << ": ";
+        cin >> value[i];
+
+        if (value[i] < 0)
+        {
+            cout << "Value cannot be negative.\n";
+            return 0;
+        }
+    }
+
+    // --------------------------------------------------------
+    // INPUT CAPACITY
+    // --------------------------------------------------------
+    int capacity;
+
+    cout << "\nEnter knapsack capacity: ";
+    cin >> capacity;
+
+    if (capacity < 0)
+    {
+        cout << "Capacity cannot be negative.\n";
+        return 0;
+    }
+
+    // --------------------------------------------------------
+    // CREATE DP TABLE
+    // dp[i][w] = maximum value using first i items
+    // with capacity w
+    // --------------------------------------------------------
+    vector<vector<int>> dp(
+        n + 1,
+        vector<int>(capacity + 1, 0)
+    );
+
+    // --------------------------------------------------------
+    // FILL DP TABLE
+    // --------------------------------------------------------
+    for (int i = 1; i <= n; i++)
+    {
+        for (int w = 1; w <= capacity; w++)
+        {
+            // If current item's weight fits
+            if (weight[i - 1] <= w)
+            {
+                int includeItem =
+                    value[i - 1]
+                    + dp[i - 1][w - weight[i - 1]];
+
+                int excludeItem =
+                    dp[i - 1][w];
+
+                dp[i][w] =
+                    max(includeItem, excludeItem);
+            }
+            else
+            {
+                // Item cannot fit
+                dp[i][w] =
+                    dp[i - 1][w];
+            }
+        }
+    }
+
+    // --------------------------------------------------------
+    // DISPLAY DP TABLE
+    // --------------------------------------------------------
+    cout << "\n====================================================\n";
+    cout << "                    DP TABLE\n";
+    cout << "====================================================\n\n";
+
+    cout << setw(8) << "Item";
+
+    for (int w = 0; w <= capacity; w++)
+    {
+        cout << setw(5) << w;
+    }
+
+    cout << "\n";
+
+    cout << "----------------------------------------------------\n";
+
+    for (int i = 0; i <= n; i++)
+    {
+        cout << setw(8) << i;
+
+        for (int w = 0; w <= capacity; w++)
+        {
+            cout << setw(5) << dp[i][w];
+        }
+
+        cout << "\n";
+    }
+
+    // --------------------------------------------------------
+    // MAXIMUM VALUE
+    // --------------------------------------------------------
+    int maximumValue = dp[n][capacity];
+
+    // --------------------------------------------------------
+    // BACKTRACK TO FIND SELECTED ITEMS
+    // --------------------------------------------------------
+    vector<int> selectedItems;
+
+    int remainingCapacity = capacity;
+
+    for (int i = n; i > 0; i--)
+    {
+        // If value differs from previous row,
+        // item i was selected.
+        if (dp[i][remainingCapacity]
+            != dp[i - 1][remainingCapacity])
+        {
+            selectedItems.push_back(i);
+
+            remainingCapacity -= weight[i - 1];
+        }
+    }
+
+    reverse(
+        selectedItems.begin(),
+        selectedItems.end()
+    );
+
+    // --------------------------------------------------------
+    // CALCULATE TOTAL WEIGHT
+    // --------------------------------------------------------
+    int totalWeight = 0;
+
+    for (int item : selectedItems)
+    {
+        totalWeight += weight[item - 1];
+    }
+
+    // --------------------------------------------------------
+    // DISPLAY RESULTS
+    // --------------------------------------------------------
+    cout << "\n====================================================\n";
+    cout << "                 FINAL RESULT\n";
+    cout << "====================================================\n";
+
+    cout << "\nMaximum Value = "
+         << maximumValue << endl;
+
+    cout << "Total Weight  = "
+         << totalWeight << endl;
+
+    cout << "Capacity      = "
+         << capacity << endl;
+
+    cout << "\nSelected Items: ";
+
+    if (selectedItems.empty())
+    {
+        cout << "None";
+    }
+    else
+    {
+        for (int item : selectedItems)
+        {
+            cout << "Item " << item << " ";
+        }
+    }
+
+    cout << "\n";
+
+    // --------------------------------------------------------
+    // DISPLAY SELECTED ITEM DETAILS
+    // --------------------------------------------------------
+    cout << "\n----------------------------------------------------\n";
+    cout << "             SELECTED ITEM DETAILS\n";
+    cout << "----------------------------------------------------\n";
+
+    cout << left
+         << setw(10) << "Item"
+         << setw(12) << "Weight"
+         << setw(12) << "Value"
+         << "\n";
+
+    cout << "----------------------------------------------------\n";
+
+    for (int item : selectedItems)
+    {
+        cout << left
+             << setw(10) << item
+             << setw(12) << weight[item - 1]
+             << setw(12) << value[item - 1]
+             << "\n";
+    }
+
+    // --------------------------------------------------------
+    // COMPLEXITY
+    // --------------------------------------------------------
+    cout << "\n====================================================\n";
+    cout << "              COMPLEXITY ANALYSIS\n";
+    cout << "====================================================\n";
+
+    cout << "\nTime Complexity  : O(n * W)\n";
+    cout << "Space Complexity : O(n * W)\n";
+
+    cout << "\nwhere:\n";
+    cout << "n = number of items\n";
+    cout << "W = knapsack capacity\n";
+
+    // --------------------------------------------------------
+    // CONCLUSION
+    // --------------------------------------------------------
+    cout << "\n====================================================\n";
+    cout << "                    CONCLUSION\n";
+    cout << "====================================================\n";
+
+    cout << "0/1 Knapsack was successfully solved using\n";
+    cout << "Dynamic Programming.\n";
+
+    cout << "The optimal value is "
+         << maximumValue << ".\n";
+
+    cout << "Each item was either selected or rejected,\n";
+    cout << "and no item was selected more than once.\n";
+
+    cout << "\nProgram completed successfully.\n";
+
+    return 0;
+}
